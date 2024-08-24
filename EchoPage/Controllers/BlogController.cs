@@ -63,5 +63,17 @@ namespace EchoPage.Controllers
             var response = await services.GetSingleBlog(id);
             return Ok(response);
         }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> DeleteBlog(int id)
+        {
+            var response = await services.RemoveBlog(id);
+            if (response)
+            {
+                return Ok("deleted");
+            }
+            return NotFound();
+        }
     }
 }

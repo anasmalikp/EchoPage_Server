@@ -9,5 +9,6 @@ namespace EchoPage.Interface
         Task<bool> UpdateBlog(Blogs blog);
         Task<IEnumerable<Blogs>> SearchBlogs(string prompt);
         Task<Blogs> GetSingleBlog(int id);
+        Task<bool> RemoveBlog(int id);
     }
 }

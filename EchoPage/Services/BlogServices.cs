@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 
 namespace EchoPage.Services
 {
-    public class BlogServices:IBlogServices
+    public class BlogServices : IBlogServices
     {
         private readonly ILogger<BlogServices> logger;
         private readonly IConfiguration config;
@@ -45,7 +45,7 @@ namespace EchoPage.Services
                 }
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError(ex.Message);
                 return false;
@@ -58,7 +58,8 @@ namespace EchoPage.Services
             {
                 var blogs = await connection.QueryAsync<Blogs>("select * from Blogs");
                 return blogs;
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 logger.LogError(ex.Message);
                 return null;
@@ -81,14 +82,14 @@ namespace EchoPage.Services
 
                 string? Errormsg = parameter.Get<string?>("@Errormsg");
 
-                if(response < 1)
+                if (response < 1)
                 {
                     logger.LogError(Errormsg);
                     return false;
                 }
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError(ex.Message);
                 return false;
@@ -114,7 +115,7 @@ namespace EchoPage.Services
                 }
                 return response;
             }
-            catch( Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError(ex.Message);
                 return null;
@@ -131,18 +132,46 @@ namespace EchoPage.Services
 
                 var response = await connection.QueryFirstAsync<Blogs>("Get_single_blog", parameter, commandType: CommandType.StoredProcedure);
                 string? Errormsg = parameter.Get<string?>("@Errormsg");
-                if(response == null)
+                if (response == null)
                 {
                     logger.LogError(Errormsg);
                     return null;
                 }
                 return response;
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
                 logger.LogError(ex.Message);
                 return null;
             }
         }
+
+        public async Task<bool> RemoveBlog(int id)
+        {
+            try
+            {
+
+                var parameter = new DynamicParameters();
+                parameter.Add("id", id);
+                parameter.Add("@Errormsg", dbType: DbType.String, size: 200, direction: ParameterDirection.Output);
+
+                var response = await connection.ExecuteAsync("Remove_blog", parameter, commandType: CommandType.StoredProcedure);
+
+                string? Errormsg = parameter.Get<string?>("@Errormsg");
+
+                if (response < 1)
+                {
+                    logger.LogError(Errormsg);
+                    return false;
+                }
+                return true;
+            }
+            catch(Exception ex)
+            {
+                logger.LogError(ex.Message);
+                return false;
+            }
+        }
+
     }
 }
